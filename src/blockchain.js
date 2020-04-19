@@ -227,13 +227,12 @@ class Blockchain {
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
             try {
-                self.chain.filter((block) => {
-                    let validateBlock = block.validate()
-                    if (validateBlock)
-                        return true
-                    else {
-                        errorLog.push(validateBlock)
+                self.chain.filter(async (block) => {
+                    let validateBlock = await block.validate()
+                    if(!validateBlock || (block.previousBlockHash !== self.chain[block.height-1].hash) ) { 
+                        errorLog.push(block.height) 
                     }
+                   
                 })
                 resolve(errorLog)
 
